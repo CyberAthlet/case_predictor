@@ -37,8 +37,14 @@ name = '101.1769'
 sensor = 0
 kind = 'month'
 
+@app.get('/')
+async def hello():
+    return JSONResponse(content = {"Nginx": "I'm alive"}, status_code= 200)
+
+
+
 @app.get('/hist/')
-async def get_predict(name:str, sensor:int):
+async def get_hist(name:str, sensor:int):
     df:pd.DataFrame = big_df[(big_df['name']==name)&(big_df['sensor_id']==sensor)]
     to_return = {}
     to_return['dates'] = df['date'].dt.strftime('%Y-%m-%d %H:%M:%S').to_list()
