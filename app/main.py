@@ -113,7 +113,7 @@ async def get_predict(name:str, sensor:int, period:int = 20, kind:str = 'month')
 
 
 @app.get('/plot/')
-def get_df(name:str, sensor:int):
+async def get_df(name:str, sensor:int):
     df = big_df[(big_df['name']==name)&(big_df['sensor_id']==sensor)]
     check_df(df)
     # if len(df)==0:
