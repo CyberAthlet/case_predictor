@@ -33,7 +33,7 @@ def get_next_date(last_date, kind):
 
 def check_df(df):
     if len(df)==0:
-        raise HTTPException(status_code=400, detail=f'{name=}  {sensor = }  not found') 
+        raise HTTPException(status_code=400, detail=f'BAD REQUEST') 
 
 period = 20
 name = '101.1769'
