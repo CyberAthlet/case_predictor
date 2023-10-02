@@ -31,6 +31,9 @@ def get_next_date(last_date, kind):
     else:
         return datetime(y+1, 1, 1)
 
+def check_df(df):
+    if len(df)==0:
+        raise HTTPException(status_code=400, detail=f'{name=}  {sensor = }  not found') 
 
 period = 20
 name = '101.1769'
@@ -46,6 +49,8 @@ async def hello():
 @app.get('/hist/')
 async def get_hist(name:str, sensor:int):
     df:pd.DataFrame = big_df[(big_df['name']==name)&(big_df['sensor_id']==sensor)]
+
+    check_df(df)
     to_return = {}
     to_return['dates'] = df['date'].dt.strftime('%Y-%m-%d %H:%M:%S').to_list()
     to_return['t'] = df['t'].to_list()
@@ -67,9 +72,9 @@ async def get_predict(name:str, sensor:int, period:int = 20, kind:str = 'month')
     seed = 0
     np.random.seed(seed)
     df = big_df[(big_df['name']==name)&(big_df['sensor_id']==sensor)]
-
-    if len(df)==0:
-        raise HTTPException(status_code=404, detail=f'{name=}  {sensor = }  not found') 
+    check_df(df)
+    # if len(df)==0:
+        # raise HTTPException(status_code=400, detail=f'{name=}  {sensor = }  not found') 
     
     last_date = df['date'].iloc[-1]
     next_date = get_next_date(last_date, kind)
@@ -110,8 +115,10 @@ async def get_predict(name:str, sensor:int, period:int = 20, kind:str = 'month')
 @app.get('/plot/')
 def get_df(name:str, sensor:int):
     df = big_df[(big_df['name']==name)&(big_df['sensor_id']==sensor)]
-    print(df)
-
+    check_df(df)
+    # if len(df)==0:
+    #     raise HTTPException(status_code=400, detail=f'{name=}  {sensor = }  not found') 
+    
     fig = make_subplots(3, 1, subplot_titles=['Температура', 'Крен', 'Уровень воды'])
 
     fig.add_trace(
