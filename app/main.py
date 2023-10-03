@@ -12,8 +12,8 @@ cur_path = os.path.dirname(os.path.abspath(__file__))
 
 print(cur_path)
 
-big_df = pd.read_pickle(os.path.join(cur_path, 'data.pck'))
-
+big_df:pd.DataFrame = pd.read_pickle(os.path.join(cur_path, 'data.pck'))
+big_df = big_df.fillna(-9999)
 app = FastAPI()
 
 def get_next_date(last_date, kind):
@@ -69,7 +69,7 @@ async def get_all_hist():
         data = []
         for us in uniq_sensors:
             df_sens:pd.DataFrame = df[df['sensor_id']==us]
-            df_sens = df_sens.fillna(-9999)
+
             dates = df_sens['date'].dt.strftime('%Y-%m-%d %H:%M:%S').to_list()
             ts = df_sens['t'].tolist()
             krens = df_sens['krens'].tolist()
