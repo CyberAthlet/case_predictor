@@ -58,6 +58,30 @@ async def get_hist(name:str, sensor:int):
     to_return['water'] = df['water'].to_list()
     return JSONResponse(content = to_return, status_code= 200)
 
+@app.get('/all_hist/')
+async def get_all_hist():
+    uniq_names = big_df['name'].unique()
+
+    to_json = {}
+    for un in uniq_names:
+        df = big_df[big_df['name']==un]
+        uniq_sensors = df['sensor_id'].unique()
+        data = []
+        for us in uniq_sensors:
+            df_sens:pd.DataFrame = df[df['sensor_id']==us]
+            df_sens = df_sens.fillna(-9999)
+            dates = df_sens['date'].dt.strftime('%Y-%m-%d %H:%M:%S').to_list()
+            ts = df_sens['t'].tolist()
+            krens = df_sens['krens'].tolist()
+            water = df_sens['water'].tolist()
+            dic = {'name':str(un), 'sensor_id':str(us),'dates':dates, 'ts':ts, 'krens':krens, 'waters':water}
+            # print(dic)
+
+            data.append(dic)
+
+        to_json[un] = data
+    
+    return JSONResponse(content=to_json, status_code=200)
 
 @app.get('/predict_list/')
 async def get_items():
